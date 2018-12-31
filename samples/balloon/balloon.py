@@ -25,6 +25,16 @@ Usage: import the module (see Jupyter notebooks for examples), or run from
 
     # Apply color splash to video using the last weights you trained
     python3 balloon.py splash --weights=last --video=<URL or path to file>
+
+DJP 20181229
+trained this with 10 epochs and it didn't crash. But when i inspected the model it wasn't amazing, yet still recognized balloons, which is good. Try training for 20 epochs. If it crashes we can always start agan. 
+
+20 was much better but it could still be greatly improved. let's pump up to 40. 
+
+40 also much improved. Still cuts out some odd bits. Made it 100
+
+100 epochs is actually quite amazing, e.g. no glasses on the table being recognized. But still some bounding box imperfections. Let's make it 200
+
 """
 
 import os
@@ -63,13 +73,15 @@ class BalloonConfig(Config):
 
     # We use a GPU with 12GB memory, which can fit two images.
     # Adjust down if you use a smaller GPU.
-    IMAGES_PER_GPU = 2
+    # DJP changed from 2 to 1
+    IMAGES_PER_GPU = 1
 
     # Number of classes (including background)
     NUM_CLASSES = 1 + 1  # Background + balloon
 
     # Number of training steps per epoch
-    STEPS_PER_EPOCH = 100
+    # DJP changed to 10 from 100
+    STEPS_PER_EPOCH = 10
 
     # Skip detections with < 90% confidence
     DETECTION_MIN_CONFIDENCE = 0.9
@@ -195,7 +207,7 @@ def train(model):
     print("Training network heads")
     model.train(dataset_train, dataset_val,
                 learning_rate=config.LEARNING_RATE,
-                epochs=30,
+                epochs=200, #changed this from 30
                 layers='heads')
 
 
